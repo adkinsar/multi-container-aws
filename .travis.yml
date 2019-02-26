@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t adkinsar/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run adkinsar/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t adkinsar/multi-client ./client
+  - docker build -t adkinsar/multi-nginx ./nginx
+  - docker build -t adkinsar/multi-server ./server
+  - docker build -t adkinsar/multi-worker ./worker
+  # Login to docker CLI
+  - echo "$DOCKER_HUB" | docker login -u "$DOCKER_USR" --password-stdin
+  # take those images and push to docker Hub
+  - docker push adkinsar/multi-client
+  - docker push adkinsar/multi-nginx
+  - docker push adkinsar/multi-server
+  - docker push adkinsar/multi-worker
