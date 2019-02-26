@@ -20,3 +20,16 @@ after_success:
   - docker push adkinsar/multi-nginx
   - docker push adkinsar/multi-server
   - docker push adkinsar/multi-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: us-east-1
+  app: multi-container
+  env: MultiContainer-env
+  bucket_name: elasticbeanstalk-us-east-1-596666968093
+  bucket_path: multi-container
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: $AWS_KEY
